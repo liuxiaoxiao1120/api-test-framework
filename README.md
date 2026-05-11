@@ -11,70 +11,90 @@
 
 ## 目录结构
 
+> **说明**：目录路径中的 `/` 分隔符对应 Java 包名中的 `.`。
+> 例如 `src/main/java/core/model/` = Java 包 `core.model`，
+> import 写法为 `import core.model.ApiCase;`。
+
 ```
 api-test/
 ├── pom.xml                              Maven 构建配置
 ├── testng.xml                           TestNG 套件入口
 │
 ├── src/main/java/
-│   └── core/
-│       ├── model/                       数据模型层
-│       │   ├── ApiCase.java             外部用例模型（CSV → ApiCase）
-│       │   ├── TestCase.java            引擎内部用例模型（ApiCase.toTestCase()）
-│       │   ├── ApiResponse.java         HTTP 响应封装
-│       │   └── ExecutionResult.java     单条用例执行结果摘要
+│   └── core/                            ← 所有框架代码的根包（package core.*）
 │       │
-│       ├── loader/                      用例加载层
-│       │   └── CaseLoader.java          读取 CSV → List<ApiCase>
+│       ├── model/           [core.model]          数据模型层
+│       │   ├── ApiCase.java                       外部用例模型（CSV → ApiCase）
+│       │   ├── TestCase.java                      引擎内部用例模型（ApiCase.toTestCase()）
+│       │   ├── ApiResponse.java                   HTTP 响应封装
+│       │   └── ExecutionResult.java               单条用例执行结果摘要
 │       │
-│       ├── config/                      配置读取层
-│       │   └── ConfigLoader.java        读取 config.properties，支持 -D 和环境变量覆盖
+│       ├── loader/          [core.loader]          用例加载层
+│       │   └── CaseLoader.java                    读取 CSV → List<ApiCase>
 │       │
-│       ├── context/                     运行时变量池
-│       │   └── VariableContext.java     存取 ${varName} 占位符变量（token 等）
+│       ├── config/          [core.config]          配置读取层
+│       │   └── ConfigLoader.java                  读取 config.properties，支持 -D 和环境变量覆盖
 │       │
-│       ├── execution/                   请求执行层
-│       │   ├── LoginManager.java        登录执行，将 token 写入 VariableContext
-│       │   ├── RequestBuilder.java      组装 URL / Header / Body
-│       │   └── GlobalHeaders.java       全局请求头构建，自动注入 token
+│       ├── context/         [core.context]         运行时变量池
+│       │   └── VariableContext.java               存取 ${varName} 占位符变量（token 等）
 │       │
-│       ├── extract/                     响应提取层
-│       │   └── ExtractorEngine.java     按 extract.json 从响应提取字段
+│       ├── execution/       [core.execution]       请求执行层
+│       │   ├── LoginManager.java                  登录执行，将 token 写入 VariableContext
+│       │   ├── RequestBuilder.java                组装 URL / Header / Body
+│       │   └── GlobalHeaders.java                 全局请求头构建，自动注入 token
 │       │
-│       ├── assertion/                   断言层
-│       │   ├── AssertionEngine.java     按 assert.json 执行声明式断言
-│       │   ├── BusinessAssertStrategy.java   业务断言接口
-│       │   ├── BusinessAssertRegistry.java   业务断言策略注册表
-│       │   ├── RouteInfoAssert.java     路线信息接口的业务断言实现
+│       ├── extract/         [core.extract]         响应提取层
+│       │   └── ExtractorEngine.java               按 extract.json 从响应提取字段
+│       │
+│       ├── assertion/       [core.assertion]       断言层
+│       │   ├── AssertionEngine.java               按 assert.json 执行声明式断言
+│       │   ├── BusinessAssertStrategy.java        业务断言接口
+│       │   ├── BusinessAssertRegistry.java        业务断言策略注册表
+│       │   ├── RouteInfoAssert.java               路线信息接口的业务断言实现
 │       │   └── RouteInfoBusinessAssertStrategy.java  策略适配器
 │       │
-│       ├── client/                      HTTP 客户端层
-│       │   ├── ApiHttpClient.java       HTTP 客户端接口（抽象，便于 Mock）
-│       │   └── OkHttpApiHttpClient.java OkHttp 实现
+│       ├── client/          [core.client]          HTTP 客户端层
+│       │   ├── ApiHttpClient.java                 HTTP 客户端接口（抽象，便于 Mock）
+│       │   └── OkHttpApiHttpClient.java           OkHttp 实现
 │       │
-│       ├── sql/                         数据库校验钩子（预留）
-│       │   ├── SqlAssertionHook.java    DB 校验接口
-│       │   └── NoOpSqlAssertionHook.java 空实现（当前默认）
+│       ├── sql/             [core.sql]             数据库校验钩子（预留）
+│       │   ├── SqlAssertionHook.java              DB 校验接口
+│       │   └── NoOpSqlAssertionHook.java          空实现（当前默认）
 │       │
-│       └── utils/                       通用工具
-│           └── JsonUtil.java            Jackson 封装 + 轻量 JSONPath
+│       └── utils/           [core.utils]           通用工具
+│           └── JsonUtil.java                      Jackson 封装 + 轻量 JSONPath
 │
 ├── src/main/resources/
-│   ├── config.properties                环境配置（baseUrl、loginPath 等）
+│   ├── config.properties                          环境配置（baseUrl、loginPath 等）
 │   ├── headers/
-│   │   └── global_headers.json          全局请求头模板（含 ${token}）
+│   │   └── global_headers.json                   全局请求头模板（含 ${token}）
 │   ├── cases/
-│   │   ├── api_cases.csv                用例清单（核心驱动文件）
+│   │   ├── api_cases.csv                          用例清单（核心驱动文件）
 │   │   └── RI001_route_info/
-│   │       ├── request.json             请求体参数
-│   │       └── assert.json              断言规则
+│   │       ├── request.json                       请求体参数
+│   │       └── assert.json                        断言规则
 │   └── extract/
-│       └── login_extract.json           登录响应字段提取规则（预留）
+│       └── login_extract.json                     登录响应字段提取规则（预留）
 │
 └── src/test/java/
-    └── tests/
-        └── ApiTestRunner.java           TestNG 测试类（套件执行入口）
+    └── tests/                [tests]
+        └── ApiTestRunner.java                     TestNG 测试类（套件执行入口）
 ```
+
+### 包名对应关系速查
+
+| 目录路径（文件系统） | Java 包名 | 典型 import 示例 |
+|---|---|---|
+| `core/model/` | `core.model` | `import core.model.ApiCase;` |
+| `core/loader/` | `core.loader` | `import core.loader.CaseLoader;` |
+| `core/config/` | `core.config` | `import core.config.ConfigLoader;` |
+| `core/context/` | `core.context` | `import core.context.VariableContext;` |
+| `core/execution/` | `core.execution` | `import core.execution.RequestBuilder;` |
+| `core/extract/` | `core.extract` | `import core.extract.ExtractorEngine;` |
+| `core/assertion/` | `core.assertion` | `import core.assertion.AssertionEngine;` |
+| `core/client/` | `core.client` | `import core.client.ApiHttpClient;` |
+| `core/sql/` | `core.sql` | `import core.sql.SqlAssertionHook;` |
+| `core/utils/` | `core.utils` | `import core.utils.JsonUtil;` |
 
 ---
 
