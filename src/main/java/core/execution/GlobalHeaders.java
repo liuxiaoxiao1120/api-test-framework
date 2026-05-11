@@ -10,8 +10,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Loads the global header template from classpath, resolves variables, and injects
- * {@code Authorization} when a token is present unless the template already defines it.
+ * 全局请求头构建器：从 {@code headers/global_headers.json} 加载模板，
+ * 替换占位符（如 {@code ${token}}），并在必要时自动注入 Authorization 头。
+ *
+ * <p>全局头模板文件路径可通过 config.properties 的 {@code global.headers.file} 覆盖，
+ * 默认为 {@code headers/global_headers.json}。
+ *
+ * <p>Authorization 注入规则：若模板中已有 Authorization（大小写不敏感），则不覆盖；
+ * 否则当 {@link core.context.VariableContext} 中存在 token 时，自动注入 {@code Bearer <token>}。
  */
 public final class GlobalHeaders {
 

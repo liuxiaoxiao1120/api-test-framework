@@ -2,6 +2,10 @@ package core.sql;
 
 import core.model.TestCase;
 
+/**
+ * {@link SqlAssertionHook} 的空实现：检测到 sql.sql 文件时打印提示，不执行实际 SQL 校验。
+ * 在未接入数据库时作为默认实现使用。
+ */
 public final class NoOpSqlAssertionHook implements SqlAssertionHook {
 
     @Override

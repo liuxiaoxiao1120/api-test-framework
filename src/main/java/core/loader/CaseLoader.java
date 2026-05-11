@@ -15,7 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reads the case manifest CSV into {@link TestCase} or {@link ApiCase} rows.
+ * 用例加载器：读取 CSV 格式的用例清单，转换为 {@link ApiCase} 对象列表。
+ *
+ * <p>CSV 文件默认路径：{@code src/main/resources/cases/api_cases.csv}，
+ * 通过 classpath 加载，支持打包后运行。
+ *
+ * <p>对 CSV 中不存在的新字段（{@code needToken}、{@code extractFile}、
+ * {@code preCaseId}、{@code maxResponseTime}）自动给默认值，不会报错，
+ * 确保新旧 CSV 格式向后兼容。
  */
 public final class CaseLoader {
 

@@ -7,13 +7,30 @@ import core.model.TestCase;
 import core.utils.JsonUtil;
 
 /**
- * Reads optional {@code extract.json} and stores values into {@link VariableContext}.
+ * 响应提取引擎：读取用例目录下的 {@code extract.json}，
+ * 按照 JSONPath 规则从响应中提取字段，并写入 {@link core.context.VariableContext}。
+ *
+ * <p>extract.json 格式示例：
+ * <pre>
+ * {
+ *   "variables": {
+ *     "orderId": "$.data.id",
+ *     "status":  "$.data.status"
+ *   }
+ * }
+ * </pre>
+ * 提取后可在后续用例的请求体或路径中通过 {@code ${orderId}} 引用。
+ *
+ * <p>若 extract.json 不存在，本引擎直接跳过，不报错。
  */
 public final class ExtractorEngine {
 
     private ExtractorEngine() {
     }
 
+    /**
+     * 若用例目录下存在 extract.json，则执行提取；否则静默跳过。
+     */
     public static void extractIfPresent(TestCase testCase, ApiResponse resp) {
         String path = testCase.extractResourcePath();
         if (!resourceExists(path)) {

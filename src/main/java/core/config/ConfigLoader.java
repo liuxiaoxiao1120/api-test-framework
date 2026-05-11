@@ -5,6 +5,19 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
+/**
+ * 配置加载器：从 classpath 的 {@code config.properties} 读取框架配置。
+ *
+ * <p>属性查找优先级（由高到低）：
+ * <ol>
+ *   <li>JVM 系统属性（{@code -Dkey=value}）</li>
+ *   <li>环境变量（camelCase 转 SCREAMING_SNAKE，如 apiBaseUrl → API_BASE_URL）</li>
+ *   <li>{@code config.local.properties}（本地覆盖文件，不入 git）</li>
+ *   <li>{@code config.properties}（默认配置）</li>
+ * </ol>
+ *
+ * <p>常用配置项：{@code loginBaseUrl}、{@code loginPath}、{@code apiBaseUrl}。
+ */
 public final class ConfigLoader {
     private static final String DEFAULT_CONFIG_FILE = "config.properties";
     private static final String LOCAL_OVERLAY_FILE = "config.local.properties";

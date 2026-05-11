@@ -10,13 +10,29 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Applies {@code assert.json} rules: status code, response time, JSON value / existence.
+ * 声明式断言引擎：读取用例目录下的 {@code assert.json}，按规则逐条执行断言。
+ *
+ * <p>支持的断言规则（assert.json 中的字段）：
+ * <ul>
+ *   <li>{@code statusCode} — 期望 HTTP 状态码，例如 200</li>
+ *   <li>{@code responseTimeLessThan} — 响应时间上限（ms）</li>
+ *   <li>{@code jsonEquals} — JSONPath → 期望值 的精确等值校验</li>
+ *   <li>{@code jsonExists} — JSONPath 列表，校验字段存在</li>
+ *   <li>{@code jsonNotEmpty} — JSONPath 列表，校验字段非空</li>
+ *   <li>{@code jsonGreaterThan} / {@code jsonLessThan} — 数值比较</li>
+ * </ul>
+ *
+ * <p>若 assert.json 不存在，则跳过断言（不报错）。
+ * 断言失败时通过 AssertJ 抛出 {@link AssertionError}，TestNG 将标记用例为失败。
  */
 public final class AssertionEngine {
 
     private AssertionEngine() {
     }
 
+    /**
+     * 读取用例的 assert.json 并执行全部断言规则。
+     */
     public static void assertCase(TestCase testCase, ApiResponse resp) {
         if (!resourceExists(testCase.assertResourcePath())) {
             return;

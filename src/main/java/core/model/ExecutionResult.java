@@ -5,7 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Per-case execution summary for reporting and future platform export.
+ * 单条用例的执行摘要，记录是否通过、状态码、耗时和失败原因。
+ *
+ * <p>当前用于控制台输出；后续可扩展为平台化报告的数据源
+ * （例如写入数据库、推送到 Allure 或飞书通知）。
  */
 public class ExecutionResult {
     private String caseId;

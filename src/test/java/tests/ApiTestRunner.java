@@ -14,8 +14,8 @@ import core.model.ExecutionResult;
 import core.model.TestCase;
 import core.sql.NoOpSqlAssertionHook;
 import core.sql.SqlAssertionHook;
+import core.execution.LoginManager;
 import core.utils.JsonUtil;
-import core.utils.LoginManager;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -26,6 +26,16 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 测试执行入口：TestNG 测试类，负责调度一条用例从加载到执行的完整流程。
+ *
+ * <p>执行流程：
+ * <ol>
+ *   <li>{@link #beforeSuite()} — 登录，将 token 存入 {@link core.context.VariableContext}</li>
+ *   <li>{@link #apiCases()} — 加载 CSV，过滤 enabled=true 的用例，封装为 {@link core.model.ApiCase}</li>
+ *   <li>{@link #run(ApiCase)} — 每条用例：构建请求 → 发送 → 提取变量 → 执行断言</li>
+ * </ol>
+ */
 public class ApiTestRunner {
 
     private final ApiHttpClient http = new OkHttpApiHttpClient();

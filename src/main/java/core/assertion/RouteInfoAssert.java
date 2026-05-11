@@ -7,10 +7,25 @@ import org.assertj.core.api.Assertions;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * 路线信息接口的业务断言实现，校验分页返回的每条路段数据的完整性和数值合理性。
+ *
+ * <p>具体校验项：
+ * <ul>
+ *   <li>roadNo / roadName / roadSectionNo / startName / endName 均非空</li>
+ *   <li>mileage >= 0</li>
+ *   <li>endMilestone >= startMilestone</li>
+ *   <li>mileage ≈ endMilestone - startMilestone（允许 0.001 误差）</li>
+ * </ul>
+ */
 public final class RouteInfoAssert {
+
     private RouteInfoAssert() {
     }
 
+    /**
+     * 遍历 {@code $.data.records} 中的每条路段数据，执行业务断言。
+     */
     public static void assertRouteInfoBusiness(ApiResponse resp) {
         JsonNode root = resp.getJson();
         Assertions.assertThat(root)

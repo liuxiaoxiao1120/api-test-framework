@@ -1,7 +1,13 @@
 package core.model;
 
 /**
- * One row from the case manifest CSV plus resolved artifact paths under {@link #getCaseDir()}.
+ * CSV 用例清单中的一行数据，同时提供各类资源文件的 classpath 路径推导。
+ *
+ * <p>该类是执行引擎（RequestBuilder / AssertionEngine / ExtractorEngine）
+ * 使用的内部模型。外部入口使用 {@link ApiCase}，通过 {@link ApiCase#toTestCase()} 转换而来。
+ *
+ * <p>路径推导规则：所有 JSON 资源文件均位于 {@link #caseDir} 目录下，
+ * 例如 {@code cases/RI001_route_info/request.json}。
  */
 public class TestCase {
     private String caseId;

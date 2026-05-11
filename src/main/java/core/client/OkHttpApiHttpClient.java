@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 基于 OkHttp 的 HTTP 客户端实现，支持 GET / POST / PUT / DELETE 方法。
+ * 连接超时 10s，读写超时 30s。
+ */
 public final class OkHttpApiHttpClient implements ApiHttpClient {
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 

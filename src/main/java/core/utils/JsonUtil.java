@@ -11,6 +11,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * JSON 工具类：封装 Jackson 操作，并提供轻量级 JSONPath 解析能力。
+ *
+ * <p>主要功能：
+ * <ul>
+ *   <li>从 classpath 读取 JSON 文件（{@link #readJsonNodeFromResource}、{@link #readTextFromResource}）</li>
+ *   <li>按 JSONPath 取值（{@link #getByJsonPath}），支持 {@code $.a.b[0].c} 格式</li>
+ *   <li>共享 {@link ObjectMapper} 单例（{@link #mapper()}）</li>
+ * </ul>
+ *
+ * <p>注意：JSONPath 实现为自研轻量版，仅支持字段访问和数组下标，
+ * 不支持过滤表达式（如 {@code [?(@.id==1)]}）。如需完整 JSONPath，可引入 Jayway。
+ */
 public final class JsonUtil {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
