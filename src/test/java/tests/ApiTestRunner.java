@@ -8,6 +8,7 @@ import core.client.OkHttpApiHttpClient;
 import core.execution.RequestBuilder;
 import core.extract.ExtractorEngine;
 import core.loader.CaseLoader;
+import core.model.ApiCase;
 import core.model.ApiResponse;
 import core.model.ExecutionResult;
 import core.model.TestCase;
@@ -37,14 +38,14 @@ public class ApiTestRunner {
 
     @DataProvider(name = "apiCases")
     public Object[][] apiCases() {
-        List<TestCase> all = CaseLoader.loadFromResource("cases/api_cases.csv");
-        List<TestCase> enabled = new ArrayList<>();
-        for (TestCase c : all) {
+        List<ApiCase> all = CaseLoader.loadApiCasesFromResource("cases/api_cases.csv");
+        List<ApiCase> enabled = new ArrayList<>();
+        for (ApiCase c : all) {
             if (c.isEnabled()) {
                 enabled.add(c);
             }
         }
-        enabled.sort(Comparator.comparing(TestCase::getCaseId, Comparator.nullsLast(String::compareToIgnoreCase)));
+        enabled.sort(Comparator.comparing(ApiCase::getCaseId, Comparator.nullsLast(String::compareToIgnoreCase)));
         Object[][] data = new Object[enabled.size()][1];
         for (int i = 0; i < enabled.size(); i++) {
             data[i][0] = enabled.get(i);
@@ -53,7 +54,14 @@ public class ApiTestRunner {
     }
 
     @Test(dataProvider = "apiCases")
-    public void run(TestCase c) throws Exception {
+    public void run(ApiCase apiCase) throws Exception {
+        System.out.println("========== ApiCase ==========");
+        System.out.println(apiCase);
+        System.out.println("=============================");
+
+        // 将 ApiCase 转换为 TestCase，复用现有执行引擎（RequestBuilder / AssertionEngine 等）
+        TestCase c = apiCase.toTestCase();
+
         ExecutionResult result = new ExecutionResult();
         result.setCaseId(c.getCaseId());
 
