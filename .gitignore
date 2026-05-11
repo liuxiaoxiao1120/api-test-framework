@@ -17,3 +17,6 @@ surefire-reports/
 
 # Env
 .env
+
+# Local API config overlay (credentials); not committed
+src/main/resources/config.local.properties

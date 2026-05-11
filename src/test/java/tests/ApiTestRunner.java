@@ -1,23 +1,23 @@
 package tests;
 
-import assertion.AssertionEngine;
-import assertion.BusinessAssertRegistry;
-import client.ApiHttpClient;
-import client.OkHttpApiHttpClient;
 import com.fasterxml.jackson.databind.JsonNode;
-import execution.RequestBuilder;
-import extract.ExtractorEngine;
-import loader.CaseLoader;
-import model.ApiResponse;
-import model.ExecutionResult;
-import model.TestCase;
+import core.assertion.AssertionEngine;
+import core.assertion.BusinessAssertRegistry;
+import core.client.ApiHttpClient;
+import core.client.OkHttpApiHttpClient;
+import core.execution.RequestBuilder;
+import core.extract.ExtractorEngine;
+import core.loader.CaseLoader;
+import core.model.ApiResponse;
+import core.model.ExecutionResult;
+import core.model.TestCase;
+import core.sql.NoOpSqlAssertionHook;
+import core.sql.SqlAssertionHook;
+import core.utils.JsonUtil;
+import core.utils.LoginManager;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import sql.NoOpSqlAssertionHook;
-import sql.SqlAssertionHook;
-import utils.JsonUtil;
-import utils.LoginManager;
 
 import java.util.ArrayList;
 import java.util.Comparator;

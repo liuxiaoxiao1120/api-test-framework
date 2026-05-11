@@ -2,57 +2,66 @@
 
 ## 项目说明
 
-这是一个基于 **Java 17 + Maven + TestNG** 的接口自动化测试框架，用于测试“农村公路科学决策系统”的接口。
+基于 **Java 17 + Maven + TestNG** 的接口自动化框架，采用 **CSV 用例清单 + 每用例独立目录**（`request.json` / `assert.json` / 可选 `extract.json` / `sql.sql`），适合命令行与 CI/CD（Jenkins、GitLab CI、GitHub Actions 等）执行。
 
-当前内置第一个示例用例：**路线信息分页查询接口**（CSV 数据驱动）。
+## 架构说明
 
-## 目录结构
+- **`src/main/java/core`**：框架核心（可被其他模块依赖），按职责分包：
+  - **`core.client`**：`ApiHttpClient` 与 OkHttp 实现，对外不暴露 OkHttp 类型。
+  - **`core.config`**：读取 `config.properties`。
+  - **`core.context`**：`VariableContext` 变量池与 `${变量}` 解析（底层配合 `core.utils.VariableUtil`）。
+  - **`core.execution`**：全局 Header 模板、`RequestBuilder` 组装请求。
+  - **`core.extract`**：`ExtractorEngine` 根据 `extract.json` 写入变量池。
+  - **`core.assertion`**：`AssertionEngine`、业务断言策略注册（`BusinessAssertStrategy`）。
+  - **`core.loader`**：`CaseLoader` 解析 CSV 为 `TestCase`。
+  - **`core.model`**：`TestCase`、`ApiResponse`、`ExecutionResult` 等模型。
+  - **`core.sql`**：数据库校验扩展点（`SqlAssertionHook`，默认无操作实现）。
+  - **`core.utils`**：`JsonUtil`、`LoginManager` 等工具与登录流程。
+  - **`core.service` / `core.controller`**：预留包（平台化时使用，当前无实现）。
+- **`src/test/java/tests`**：仅保留 **`ApiTestRunner`**，作为 TestNG 入口，调用 `core` 中的能力。
+- **`src/main/resources`**：运行时资源（与核心同 JAR/classpath），包括：
+  - `config.properties`：环境地址、登录路径等。
+  - `headers/global_headers.json`：全局请求头模板（可通过配置 `global.headers.file` 覆盖路径）。
+  - `cases/api_cases.csv`：用例清单。
+  - `cases/<用例目录>/`：各用例的 `request.json`、`assert.json` 等。
+
+## 目录结构（摘要）
 
 ```
 api-test
 ├── pom.xml
 ├── testng.xml
 ├── README.md
-├── src/test/java
-│   ├── client
-│   │   └── HttpClientUtil.java
-│   ├── config
-│   │   └── ConfigLoader.java
-│   ├── model
-│   │   └── ApiCase.java
-│   ├── tests
-│   │   └── RouteInfoApiTest.java
-│   └── utils
-│       ├── CsvUtil.java
-│       └── JsonUtil.java
-└── src/test/resources
-    ├── config.properties
-    ├── cases
-    │   └── route_info_cases.csv
-    └── request
-        └── route_info
-            └── query_page_1.json
+├── src/main/java/core/          # 框架核心
+│   ├── client/
+│   ├── config/
+│   ├── context/
+│   ├── execution/
+│   ├── extract/
+│   ├── assertion/
+│   ├── loader/
+│   ├── model/
+│   ├── sql/
+│   ├── utils/
+│   ├── service/                 # package-info 预留
+│   └── controller/              # package-info 预留
+├── src/main/resources/          # 配置、CSV、用例数据、全局 headers
+│   ├── config.properties
+│   ├── headers/
+│   └── cases/
+└── src/test/java/tests/
+    └── ApiTestRunner.java       # TestNG 入口
 ```
 
 ## 如何运行
 
-确保已安装 JDK 17 与 Maven，然后在项目根目录执行：
+需已安装 **JDK 17** 与 **Maven**，在项目根目录执行：
 
 ```bash
 mvn clean test
 ```
 
-## 如何新增接口用例
+## 如何新增用例
 
-1. 在 `src/test/resources/request/<模块名>/` 下新增请求 JSON（例如 `request/route_info/query_page_2.json`）。
-2. 在 `src/test/resources/cases/` 下对应 CSV 中追加一行用例数据，字段含义如下：
-   - `caseId`：用例编号
-   - `caseName`：用例名称
-   - `method`：HTTP 方法（目前示例用例使用 POST）
-   - `path`：接口路径（不含 baseUrl）
-   - `requestFile`：请求体 JSON 文件路径（相对 `src/test/resources`）
-   - `expectCode/expectMsg`：业务码与消息断言
-   - `expectPageNum/expectPageSize`：分页断言
-   - `maxResponseTime`：最大响应时间（毫秒）
-3. 参照 `tests.RouteInfoApiTest` 新增测试类，并在 `testng.xml` 中添加 `<class name="..."/>`。
-
+1. 在 `src/main/resources/cases/` 下新建用例目录，例如 `cases/MY_CASE_001/`，放入 `request.json`、`assert.json`（可选 `extract.json`、`sql.sql`）。
+2. 在 `src/main/resources/cases/api_cases.csv` 中追加一行，填写 `caseId`、`method`、`baseUrlKey`、`path`、`caseDir`（指向上述目录的 classpath 相对路径）等字段；`businessAssert` 列可填已注册的策略名（如 `RouteInfoAssert`），留空则只做声明式断言。
