@@ -1,0 +1,19 @@
+# IDEA
+.idea/
+*.iml
+
+# Maven
+target/
+
+# Logs
+logs/
+*.log
+
+# Mac
+.DS_Store
+
+# Test reports
+surefire-reports/
+
+# Env
+.env

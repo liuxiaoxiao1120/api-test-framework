@@ -1,0 +1,6 @@
+{
+  "Accept": "application/json, text/plain, */*",
+  "Content-Type": "application/json",
+  "O-TOKEN": "${token}",
+  "X-CLIENT": "CLIENT_WEB"
+}

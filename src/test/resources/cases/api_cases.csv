@@ -1,3 +1,2 @@
-caseId,module,apiName,enabled,method,baseUrlKey,path,headersFile,requestFile,assertFile,businessAssert,extractFile,maxResponseTime
-LOGIN001,登录,用户登录,Y,GET,loginBaseUrl,/backend/zlt/teammate/login?userName=xxx&password=,headers/default_headers.json,,assert/login/login_assert.json,,extract/login_extract.json,1000
-RI001,路线信息,路线分页查询,Y,POST,apiBaseUrl,/infoRoadSection/getInfoRoadSectionListPage,headers/default_headers.json,request/route_info/query_page_1.json,assert/route_info/query_page_1_assert.json,RouteInfoAssert,,1000
+caseId,module,apiName,enabled,method,baseUrlKey,path,caseDir,businessAssert
+RI001,路线信息,路线分页查询,Y,POST,apiBaseUrl,/infoRoadSection/getInfoRoadSectionListPage,cases/RI001_route_info,RouteInfoAssert

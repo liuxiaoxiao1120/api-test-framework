@@ -33,6 +33,14 @@ public final class ConfigLoader {
         return value.trim();
     }
 
+    public static String getOptionalProperty(String key, String defaultValue) {
+        String value = getProperties().getProperty(key);
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        return value.trim();
+    }
+
     private static Properties getProperties() {
         if (cached != null) {
             return cached;

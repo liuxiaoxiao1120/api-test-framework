@@ -1,0 +1,19 @@
+{
+  "statusCode": 200,
+  "jsonExists": [
+    "$.code",
+    "$.data"
+  ],
+  "jsonEquals": {
+    "$.code": 1000,
+    "$.msg": "操作成功"
+  },
+  "jsonNotEmpty": [
+    "$.data.records"
+  ],
+  "jsonGreaterThan": {
+    "$.data.total": 0,
+    "$.data.pages": 0
+  },
+  "responseTimeLessThan": 1000
+}
